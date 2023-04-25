@@ -1,0 +1,230 @@
+
+
+      <section>
+        <div class="container">
+
+          <div class="row justify-content-center">
+
+
+
+
+
+
+
+            <div class="col-md-6 mt-5" style="margin-left: -720px;">
+
+              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Product/</span> Add Product</h4>
+              <form action="/admin/add-product" method="post" enctype="multipart/form-data"
+                onsubmit="handleSubmit(event)">
+                <div class="card mb-4" style="width:1400px;">
+
+                  <div class="card-body" style="width:1400px;">
+                    <div style="padding-left:100px">
+                      {{!-- <h2 class="text-center" style="margin-left: -100px;">Add Product</h2> --}}
+
+                    </div>
+                    <div class="mb-3">
+                      <label for="category" class="form-label">Category</label>
+                      <select id="category" class="form-select" name="category">
+                        <option selected>----choose category----</option>
+                        {{#each categories}}
+                        <option value="{{this._id}}">{{this.category}}</option>
+
+                        {{/each}}
+                      </select>
+                    </div>
+                    <div>
+                      <label for="name" class="form-label">Product Name</label>
+                      <input type="text" class="form-control" id="defaultFormControlInput"
+                        aria-describedby="defaultFormControlHelp" name="name" />
+
+                    </div>
+                    <div>
+                      <label for="price" class="form-label">Price</label>
+                      <input type="text" class="form-control" id="defaultFormControlInput"
+                        aria-describedby="defaultFormControlHelp" name="price" />
+
+                    </div>
+
+                    <div id="img-card" class="img-card"
+                      style="position:relative; width:100px;height: 100px; display:none;">
+                      <img src="" width="100px;" height="100px;" />
+                      {{!-- <button type="button" style="position: absolute; right:5px;top:5px;">X</button> --}}
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="image" class="form-label">Image</label>
+                      <input class="form-control" type="file" id="img-input" style="visibility: hidden;"
+                        onchange="addImage(event)" />
+                      <div id="img-container">
+
+
+                      </div>
+                      <input type="button" value="+ add" onclick="document.getElementById('img-input').click();" />
+
+                    </div>
+                    <div>
+                      <label for="quantity" class="form-label">Quantity</label>
+                      <input type="text" class="form-control" id="defaultFormControlInput"
+                        aria-describedby="defaultFormControlHelp" name="quantity" />
+
+                    </div>
+                    <div>
+                      <label for="description" class="form-label">Description</label>
+                      <input type="text" class="form-control" id="defaultFormControlInput"
+                        aria-describedby="defaultFormControlHelp" name="description" />
+
+                    </div>
+                    <button type="submit" class="btn btn-success mt-4" style="margin-left: 1260px;">Submit</button>
+
+                  </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+            </form>
+
+          </div>
+
+        </div>
+      </section>
+
+      <script>
+        const handleSubmit = async (e) => {
+          e.preventDefault();
+          e.stopImmediatePropagation()
+          const formValid = validateForm();
+          if (!formValid) return;
+
+          var fd = new FormData(document.forms[0]);
+
+          const imgContainer = document.getElementById("img-container").getElementsByTagName("img")
+          console.log(imgContainer)
+          for (const item of imgContainer) {
+            const res = await fetch(item.src)
+            const blob = await res.blob()
+            console.log(blob)
+            fd.append("image", blob);
+          }
+
+          for (var pair of fd.entries()) {
+            console.log(pair[0] + ', ' + pair[1]);
+          }
+
+          $.ajax({
+            type: "POST",
+            url: "/admin/add-product",
+            data: fd,
+            processData: false,
+            contentType: false,
+            success: (data) => {
+              Swal.fire('Product added successfully!')
+            },
+            error: function (xhr, status, error) {
+              alert(xhr.responseText);
+            }
+          });
+        }
+
+
+        const imgCard = document.getElementById("img-card")
+        function addImage(e) {
+          console.log(e.target.value)
+
+          const imgCardTemp = imgCard.cloneNode(true)
+          imgCardTemp.style.display = "block";
+          console.log(imgCardTemp)
+
+          const files = e.target.files;
+
+          // FileReader support
+          if (FileReader && files && files.length) {
+            var fr = new FileReader();
+            fr.onload = function () {
+              imgCardTemp.querySelector("img").src = fr.result;
+              document.getElementById("img-container").appendChild(imgCardTemp);
+            }
+            fr.readAsDataURL(files[0]);
+          }
+
+          // Not supported
+          else {
+            // fallback -- perhaps submit the input to an iframe and temporarily store
+            // them on the server until the user's session ends.
+          }
+
+
+
+
+        }
+      </script>
+
+
+      
+
+      <script>
+        // get form element
+        const form = document.querySelector('form');
+
+        // get input elements
+        const category = form.elements.category;
+        const name = form.elements.name;
+        const price = form.elements.price;
+        const quantity = form.elements.quantity;
+        const description = form.elements.description;
+
+        // add event listener to form submit event
+        function validateForm() {
+          console.log(form)
+
+          // clear previous error messages
+          const errorMessages = document.querySelectorAll('.error-message');
+          errorMessages.forEach((element) => element.remove());
+
+          // perform validation
+          let isValid = true;
+
+          if (category.value === '----choose category----') {
+            category.insertAdjacentHTML('afterend', '<p class="error-message text-danger">Please choose a category</p>');
+            isValid = false;
+          }
+
+          if (name.value.trim() === '') {
+            name.insertAdjacentHTML('afterend', '<p class="error-message text-danger">Please enter a product name</p>');
+            isValid = false;
+          }
+
+          if (!/^\d+(?:\.\d{1,2})?$/.test(price.value.trim())) {
+            price.insertAdjacentHTML('afterend', '<p class="error-message text-danger">Please enter a valid price</p>');
+            isValid = false;
+          }
+
+          {{!-- if (image.value.trim() === '') {
+            image.insertAdjacentHTML('afterend', '<p class="error-message text-danger">Please choose an image</p>');
+            isValid = false;
+          } --}}
+
+          if (!/^\d+$/.test(quantity.value.trim())) {
+            quantity.insertAdjacentHTML('afterend', '<p class="error-message text-danger">Please enter a valid quantity</p>');
+            isValid = false;
+          }
+
+          if (description.value.trim() === '') {
+            description.insertAdjacentHTML('afterend', '<p class="error-message text-danger">Please enter a product description</p>');
+            isValid = false;
+          }
+
+          // submit form if valid
+          return isValid
+
+
+        };
+      </script>

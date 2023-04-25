@@ -1,0 +1,119 @@
+
+
+
+
+     
+          <section>
+        <div class="container">
+
+          <div class="row justify-content-center">
+
+
+
+
+
+
+
+            <div class="col-md-6 mt-5" style="margin-left: -720px;">
+
+              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Product/</span>Edit Product</h4>
+              {{!-- <form action="/admin/add-product" method="post" enctype="multipart/form-data"> --}}
+                <form action="/admin/edit-product/{{product._id}}" method="post" enctype="multipart/form-data">
+                  <div class="card mb-4" style="width:1400px;">
+
+                    <div class="card-body" style="width:1400px;">
+                      <div style="padding-left:100px">
+                        {{!-- <h2 class="text-center" style="margin-left: -100px;">Add Product</h2> --}}
+
+                      </div>
+                      <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <div>
+                        <select id="category" class="form-select" name="category" style="width:1360px; border-color:#CED4DA; height:38px;">
+                          {{#each categories}}
+                          {{#if (ifeq ../product.category this.category)}}
+                          <option selected>{{this.category}}</option>
+                          {{else}}
+                          <option>{{this.category}}</option>
+                          {{/if}}
+
+                          {{/each}}
+                        </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label for="name" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="defaultFormControlInput"
+                          aria-describedby="defaultFormControlHelp" name="name" value="{{product.name}}" />
+
+
+
+                      </div>
+                      <div>
+                        <label for="price" class="form-label">Price</label>
+                        <input type="text" class="form-control" id="defaultFormControlInput"
+                          aria-describedby="defaultFormControlHelp" name="price" value="{{product.price}}" />
+
+
+
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="image" class="form-label">Image</label>
+                        <img src="/product-images/{{product._id}}.jpg" alt=""
+                          style="width: 50px; height:50px; margin-bottom:10px;" id="imgView">
+                        <input class="form-control" type="file" id="formFile" name="image"
+                          onchange="viewImage(event)" />
+
+
+
+                      </div>
+                      <div>
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="text" class="form-control" id="defaultFormControlInput"
+                          aria-describedby="defaultFormControlHelp" name="quantity" value="{{product.quantity}}" />
+
+
+
+                      </div>
+                      <div>
+                        <label for="description" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="defaultFormControlInput"
+                          aria-describedby="defaultFormControlHelp" name="description"
+                          value="{{product.description}}" />
+
+
+
+                      </div>
+                      <button type="submit" class="btn btn-success mt-4" style="margin-left: 1260px;">Submit</button>
+
+                    </div>
+                  </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+            </form>
+
+          </div>
+
+        </div>
+      </section>
+      <script>
+        function viewImage(event) {
+          document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
+        }
+      </script>
+
+          
+                     
+                    
+
+    

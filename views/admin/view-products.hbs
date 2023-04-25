@@ -1,0 +1,119 @@
+
+      <!-- / Navbar -->
+
+      <!-- Content wrapper -->
+      <div class="content-wrapper">
+        <!-- Content -->
+
+        <section>
+          <div class="container mt-5">
+
+            <div class="card">
+              <h5 class="card-header">E Shopper</h5>
+              <div class="table-responsive text-nowrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Image</th>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>Stock</th>
+                      <th>Price</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-border-bottom-0">
+                    {{#each products}}
+                    <tr>
+                      <td>{{inc @index}}</td>
+                      <td><img style="width:50px; height:50px;" src="/product-images/{{this.images.[0]}}" alt="" />
+                      </td>
+                      <td>{{this.name}}</td>
+                      <td>{{this.description}}</td>
+                      <td>{{this.quantity}}</td>
+                      <td>Rs.{{this.price}}</td>
+                      {{!-- <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>Angular
+                          Project</strong></td>
+                      <td>Albert Cook</td>
+                      <td></td>
+                      <td><span class="badge bg-label-primary me-1">Active</span></td> --}}
+                      <td>
+                        <div class="dropdown">
+                          <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                            <i class="bx bx-dots-vertical-rounded"></i>
+                          </button>
+                          <div class="dropdown-menu">
+                            <a href="/admin/edit-product/{{this._id}}" class="dropdown-item"><i
+                                class="bx bx-edit-alt me-1"></i>
+                              Edit</a>
+                            <a class="dropdown-item" onclick="deleteProduct('{{this._id}}')"><i
+                                class="bx bx-trash me-1"></i>
+                              Delete</a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    {{/each}}
+
+
+                  </tbody>
+                </table>
+
+              </div>
+            </div>
+
+
+          </div>
+        </section>
+        <nav aria-label="..." style="margin-left: 1440px; margin-top:10px;">
+          <ul class="pagination pagination-lg">
+            <li class="page-item"><a class="page-link" href="/admin/products?page=1">1</a></li>
+            <li class="page-item"><a class="page-link" href="/admin/products?page=2">2</a></li>
+            <li class="page-item"><a class="page-link" href="/admin/products?page=3">3</a></li>
+          </ul>
+        </nav>
+        <!--/ Total Revenue -->
+
+
+
+
+
+
+
+
+
+        <script>
+          function deleteProduct(proId) {
+            Swal.fire({
+              title: 'Are you sure?',
+              text: "You won't be able to revert this!",
+              icon: 'warning',
+              showButton: true,
+              confirmButtonColor: '#3085d6',
+              ButtonColor: '#d33',
+              confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                $.ajax({
+                  url: "/admin/delete-product/" + proId,
+                  success: () => {
+                    Swal.fire(
+                      'Deleted!',
+                      'Your file has been deleted.',
+                      'success'
+                    )
+
+                  }
+
+
+                })
+
+              }
+            })
+          }
+        </script>
+
+
+
+        

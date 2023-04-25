@@ -1,0 +1,130 @@
+
+            <div class="content-wrapper">
+                <!-- Content -->
+
+                <section>
+                    <div class="container mt-5">
+
+                        <div class="card">
+                            <h5 class="card-header">E Shopper</h5>
+                            <div class="table-responsive text-nowrap">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Name</th>
+                                            <th>Phone</th>
+                                            <th>Email</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-border-bottom-0">
+                                        {{#each users}}
+                                        <tr>
+                                            <td>{{inc @index}}</td>
+
+                                            <td>{{name}}</td>
+                                            <td>{{phone}}</td>
+                                            <td>{{email}}</td>
+                                            {{!-- <td><i class="fab fa-angular fa-lg text-danger me-3"></i>
+                                                <strong>Angular
+                                                    Project</strong>
+                                            </td>
+                                            <td>Albert Cook</td>
+                                            <td></td>
+                                            <td><span class="badge bg-label-primary me-1">Active</span></td> --}}
+
+                                            <td>
+                                                <span id="status-{{_id}}" class="status" data-is-active="{{isActive}}">
+                                                    {{#if isActive}}Activated{{else}}Deactivated{{/if}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                        data-bs-toggle="dropdown">
+                                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu">
+
+                                                        <button onclick="changeUserStatus('{{this._id}}',true)"
+                                                            class="dropdown-item"><i class="bx bx-edit-alt me-1"></i>
+                                                            Active</button>
+                                                        <button onclick="changeUserStatus('{{this._id}}',false)"
+                                                            class="dropdown-item"><i
+                                                                class="bx bx-edit-alt me-1"></i>Deactivate</button>
+
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {{/each}}
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </section>
+
+                <!--/ Total Revenue -->
+
+
+
+
+
+
+
+                
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const statusElements = document.getElementsByClassName("status")
+                        for (const element of statusElements) {
+                            const isActive = element.getAttribute("data-is-active")
+                            console.log(isActive, typeof isActive)
+                            if (isActive === "true") {
+                                element.classList.add("text-success");
+                            } else {
+                                element.classList.add("text-danger");
+                            }
+                        }
+
+                    }, false);
+                    function changeUserStatus(userId, isActive) {
+
+
+                        console.log(userId, typeof isActive)
+                        $.ajax({
+                            url: '/admin/change-user-status/' + userId,
+                            method: 'patch',
+                            data: {
+                                status: isActive
+                            },
+                            success: (response) => {
+                                console.log(response, "dtyft")
+                                let statusElement = document.getElementById(`status-${userId}`)
+                                console.log(statusElement)
+                                if (isActive) {
+                                    statusElement.innerText = "Activated"
+                                    statusElement.classList.add("text-success");
+                                }
+                                else {
+                                    statusElement.innerText = "Deactivated"
+                                    statusElement.classList.add("text-danger");
+                                }
+                            },
+                            error: (err) => {
+                                console.log(err, "error")
+                            }
+
+                        })
+                    }
+                </script>
+
+
+                

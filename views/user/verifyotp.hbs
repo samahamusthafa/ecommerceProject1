@@ -1,0 +1,129 @@
+
+{{!-- <form action="/verify-otp" method="post">
+    
+    <div>
+        <label>OTP</label>
+        <input type="text" name="otp"/>
+    </div>
+    <button type="submit">Verify OTP</button>
+
+
+</form> --}}
+
+
+<link rel='stylesheet' href='/stylesheets/login.css'/>
+<div id="container">
+    <div class="card" id="card">
+        <div class="front">
+            {{!-- <p class="login_word">LOG IN</p> --}}
+            <img src="https://drive.google.com/uc?export=view&id=1K5_tAX_taOQQ0wwmFx3P--V05kjvg4cu"
+                alt="person picture">
+            <form action="/verify-otp" method="post" onsubmit="return validateSubmit()">
+                <div>
+                    <div>
+                        <label>OTP</label>
+                        <input type="text" name="otp" id="email" style="width: 500px;" class="f1">
+                    </div>
+                    
+                </div>
+                <button class="f1" name="login" value="clicked" type="submit">Verify OTP</button>
+                
+                
+                
+                
+                
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+{{!-- <div class="otp-input">
+  <input type="text" maxlength="5" name="otp">
+  <div class="otp-box-group">
+  <div aria-hidden="true" class="otp-box"><span>0</span></div>
+      <div aria-hidden="true" class="otp-box"><span>0</span></div>
+      <div aria-hidden="true" class="otp-box"><span>0</span></div>
+      <div aria-hidden="true" class="otp-box"><span>0</span></div>
+      <div aria-hidden="true" class="otp-box"><span>0</span></div>
+      <div aria-hidden="true" class="otp-box"><span>0</span></div>
+    </div>
+
+</div>
+
+<style>
+
+    :root {
+  --colorPrimary100: #0044FF;
+  --colorAlert100: #e34b48;
+  --colorDark050: #555555;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:after,
+*:before {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: 'Inter';
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.otp-input {
+  position: relative;
+}
+
+.otp-box {
+  width: 42px;
+  padding: 14px;
+  border: 2px solid var(--colorDark050);
+  border-radius: 8px;
+}
+
+input {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  letter-spacing: 40px;
+  background: none;
+  font-size: inherit;
+  border: none;
+  
+}
+
+input:focus + .otp-box-group > .otp-box {
+  width: 40x;
+  border: 2px solid var(--colorPrimary100);
+}
+
+input:invalid + otp-box-group > otp-box {
+  border: 2px solid var(--colorAlert100);
+}
+
+.otp-box:not(:last-child) {
+  margin-right: 8px;
+}
+
+.otp-box span {
+  visibility: hidden;
+}
+
+
+.otp-box-group {
+  display: flex;
+}
+
+input:focus + .otp-box {
+  
+}
+
+</style> --}}
+

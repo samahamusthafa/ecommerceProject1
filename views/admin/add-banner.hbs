@@ -1,0 +1,79 @@
+
+      <section>
+        <div class="container">
+
+          <div class="row justify-content-center">
+
+
+           
+
+
+
+
+            <div class="col-md-6 mt-5" style="margin-left: -720px;">
+
+              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Banner/</span> Add a beautiful banner</h4>
+              <form action="/admin/add-banner" method="post" enctype="multipart/form-data" id="banner-form">
+  <div class="card mb-4" style="width:1400px;">
+    <div class="card-body" style="width:1400px;">
+      <div style="padding-left:100px">
+      </div>
+      <div>
+        <label for="banner_type" class="form-label">Type</label>
+        <input type="text" class="form-control" id="banner_type" aria-describedby="defaultFormControlHelp" name="banner_type" />
+        <div class="invalid-feedback banner-type-error">Please enter a banner type.</div>
+      </div>
+      <div class="mb-3">
+        <label for="image" class="form-label">Image</label>
+        <input class="form-control" type="file" id="image" name="image" />
+        <div class="invalid-feedback image-error">Please select an image.</div>
+      </div>
+      <button type="submit" class="btn btn-success mt-4" style="margin-left: 1260px;">Submit</button>
+    </div>
+  </div>
+</form>
+
+<script>
+  const form = document.getElementById('banner-form');
+  const bannerType = document.getElementById('banner_type');
+  const image = document.getElementById('image');
+
+  form.addEventListener('submit', function(event) {
+    let isValid = true;
+
+    // Validate banner type
+    if (!bannerType.value) {
+      isValid = false;
+      bannerType.classList.add('is-invalid');
+      document.querySelector('.banner-type-error').style.display = 'block';
+    } else {
+      bannerType.classList.remove('is-invalid');
+      document.querySelector('.banner-type-error').style.display = 'none';
+    }
+
+    // Validate image
+    if (!image.value) {
+      isValid = false;
+      image.classList.add('is-invalid');
+      document.querySelector('.image-error').style.display = 'block';
+    } else {
+      image.classList.remove('is-invalid');
+      document.querySelector('.image-error').style.display = 'none';
+    }
+
+    if (!isValid) {
+      event.preventDefault();
+    }
+  });
+</script>
+
+
+          </div>
+
+        </div>
+      </section>
+      
+
+      
+
+     

@@ -1,0 +1,54 @@
+<link rel='stylesheet' href='/stylesheets/login.css' />
+<div id="container">
+    <div class="card" id="card">
+        <div class="front">
+            <p class="login_word">LOG IN</p>
+            <img src="https://drive.google.com/uc?export=view&id=1K5_tAX_taOQQ0wwmFx3P--V05kjvg4cu"
+                alt="person picture">
+            <form action="/login" method="post" onsubmit="return validateSubmit()">
+                <div>
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="email" name="email" id="email" style="width: 500px;" class="f1">
+                    </div>
+                    <div>
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" style="width: 500px; margin-right:40px"
+                            class="f1">
+                    </div>
+                </div>
+                <button class="f1" name="login" value="clicked">LOGIN</button>
+                <div>
+                    {{#if loginErr}}
+                    <p style="color:red" class="error">{{loginErr}}</p>
+                    {{/if}}
+
+                    <div id="error" style="color:red"></div>
+
+                </div>
+                <div>
+                  <a href="/signup">Not registered? <span onclick="flip()">Create an account</span></a>
+                </div>
+                
+                
+                
+            </form>
+        </div>
+    </div>
+
+</div>
+<script>
+    const email = document.getElementById("email")
+    const password = document.getElementById("password")
+    function validateSubmit() {
+        if (email.value === "" || password.value === "") {
+            document.getElementById("error").innerHTML = "<b>Enter email and password</b>"
+            return false;
+        }
+        else {
+            document.getElementById("error").innerHTML = ""
+        }
+    }
+
+
+</script>

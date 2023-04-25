@@ -1,0 +1,125 @@
+<html>
+
+<head>
+    <title>Sales Report</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        th {
+            background-color: #000000;
+            color: white;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        input[type=date] {
+            padding: 8px;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            width: 200px;
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+
+        input[type=submit] {
+            background-color: #000000;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>SALES REPORT</h1>
+    <form action="/admin/showsalesreport" method="POST" onsubmit="searchProducts(event)">
+
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="startDate" name="startDate">
+
+        <label for="end_date">End Date:</label>
+        <input type="date" name="endDate" id="endDate">
+
+        <input type="submit" value="Generate Report">
+
+    </form>
+
+    <table style="width:1500px; margin-left:250px;" class="mt-5">
+        {{!-- <h4>DAILY SALES</h4> --}}
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Address</th>
+                <th>Payment Method</th>
+                <th>Order Status</th>
+                <th>totalAmount</th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+            {{#each orders}}
+            <tr>
+                
+                <td>{{this.dateField}}</td>
+                
+                <td>
+                    <p class="address" style="color: black;"> 
+
+                      {{this.address.name}}<br/>
+                      {{this.address.address}}<br/>
+                      {{this.address.phone}}
+
+                    </p>
+                    
+                </td>
+                <td>{{this.paymentMethod}}</td>
+                <td style="color: green;"><b>{{this.orderStatus}}</b></td>
+                <td style="color: green;"><b>Rs.{{this.total}}</b></td>
+                
+            </tr>
+            {{/each}}
+        </tbody>
+
+
+
+    </table>
+    <script>
+        function searchProducts(e) {
+            e.preventDefault();
+            e.stopPropagation();
+             e.stopImmediatePropagation()
+             console.log(e)
+            const startDate = e.target[0].value
+            const endDate = e.target[1].value
+            console.log(startDate)
+            window.location.replace(`/admin/salesreport?start=${startDate}&end=${endDate}`)
+        }
+    </script>
+   
+</body>
+
+</html>

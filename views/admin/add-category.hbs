@@ -1,0 +1,115 @@
+
+
+
+
+      
+
+
+
+      
+
+
+
+
+
+      
+
+      <section>
+        <div class="container">
+
+          <div class="row justify-content-center">
+
+
+
+
+
+
+
+            <div class="col-md-6 mt-5" style="margin-left: -720px;">
+
+
+              <form action="/admin/add-category" method="post" enctype="multipart/form-data"
+                onsubmit="return validateForm()">
+                <div class="card mb-4" style="width:1400px;">
+                  <div class="card-body" style="width:1400px;">
+                    <div style="padding-left:100px">
+                      <h2 class="text-center" style="margin-left: -100px;">Add Category</h2>
+                    </div>
+                    <div>
+                      <label for="category" class="form-label">Category</label>
+                      <input type="text" class="form-control" id="category" aria-describedby="categoryHelp"
+                        name="category">
+                      <small id="categoryHelp" class="form-text text-muted "></small>
+                    </div>
+                    <div class="mb-3">
+                      <label for="image" class="form-label">Image</label>
+                      <input class="form-control" type="file" id="image" name="image">
+                      <small id="imageHelp" class="form-text text-muted "></small>
+                    </div>
+
+                    <button type="submit" class="btn btn-success mt-4" style="margin-left: 1260px;">Submit</button>
+                  </div>
+                </div>
+              </form>
+
+              
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          </div>
+
+        </div>
+      </section>
+
+      <script>
+                function validateForm() {
+                  // Get form elements
+                  const categoryInput = document.getElementById("category");
+                  const imageInput = document.getElementById("image");
+                  
+
+                  // Validate category
+                  if (categoryInput.value.trim() === "") {
+                    categoryInput.classList.add("is-invalid");
+                    document.getElementById("categoryHelp").innerHTML = "Please enter a category name.";
+                    return false;
+                  } else {
+                    categoryInput.classList.remove("is-invalid");
+                    document.getElementById("categoryHelp").innerHTML = "";
+                  }
+
+                  // Validate image
+                  const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+                  if (!allowedExtensions.exec(imageInput.value)) {
+                    imageInput.classList.add("is-invalid");
+                    document.getElementById("imageHelp").innerHTML = "Please select a valid image file (JPG, JPEG, PNG, GIF).";
+                    return false;
+                  } else {
+                    imageInput.classList.remove("is-invalid");
+                    document.getElementById("imageHelp").innerHTML = "";
+                  }
+
+                  // Validate quantity
+                  
+
+                  return true;
+                }
+              </script>
+
+      
+
+      

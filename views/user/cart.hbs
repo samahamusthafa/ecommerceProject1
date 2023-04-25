@@ -1,0 +1,182 @@
+
+
+<section>
+    <!-- Page Header Start -->
+    <div class="container-fluid bg-secondary mb-5">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px; width:100%;">
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Shopping Cart</h1>
+            <div class="d-inline-flex">
+                <p class="m-0"><a href="/home">Home</a></p>
+                <p class="m-0 px-2">-</p>
+                <p class="m-0">Shopping Cart</p>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+
+    <!-- Cart Start -->
+    <div class="container-fluid pt-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-8 table-responsive mb-5">
+                <table class="table table-bordered text-center mb-0">
+                    <thead class="bg-secondary text-dark">
+                        <tr>
+                            {{!-- <th>Image</th> --}}
+                            <th>Products</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                        {{#each products}}
+                        <tr id="product-container-{{this.product._id}}">
+
+                            {{!-- <td><img style="width:100px; height:100px" src="/product-images/{{this._id}}.jpg"
+                                    alt=""></td> --}}
+                            <td class="align-middle"><img src="/product-images/{{this.images.[0]}}" alt=""
+                                    style="width: 50px; height:50px; margin-right:20px;">{{this.product.name}}</td>
+
+                            <td class="align-middle">Rs.<span
+                                    id="product-price-{{this.product._id}}"><b>{{this.product.price}}</b></span></td>
+
+                            <td class="align-middle">
+                                <div class="input-group quantity mx-auto" style="width: 100px;">
+
+                                    <button class="cart-item-count mr-3"
+                                        onclick="changeQuantity('{{this._id}}','{{this.product._id}}',-1)" style="background-color:#FFB30E; border:#FFB30E;">-</button>
+                                    <span id="quantity-{{this.product._id}}">{{this.quantity}}</span>
+                                    <button class="cart-item-count ml-3"
+                                        onclick="changeQuantity('{{this._id}}','{{this.product._id}}',1)"  style="background-color:#FFB30E; border:#FFB30E;">+</button>
+
+                                </div>
+                            </td>
+
+                            <td class="align-middle">Rs.<span id="total-price-{{this.product._id}}"
+                                    class="total-price"><b>{{multiply
+                                    this.quantity this.product.price}}</span></td>
+
+                            <td>
+                                <button
+                                    onclick="deleteCartProduct('{{this._id}}','{{this.product._id}}')" style="background-color:#FFB30E; border:#FFB30E;">Remove</button>
+                            </td>
+                        </tr>
+
+                        {{/each}}
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-lg-4">
+                
+                <div class="card border-secondary mb-5">
+                    <div class="card-header bg-secondary border-0">
+                        <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3 pt-1">
+                            <h6 class="font-weight-medium">Subtotal</h6>
+                            <h6>Rs.<span class="font-weight-medium" id="sub-total"></span></h6>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-medium">Shipping</h6>
+                            
+                            <h6>Rs.<span class="font-weight-medium" id="shipping">10</span></h6>
+                        </div>
+                    </div>
+                    <div class="card-footer border-secondary bg-transparent">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5 class="font-weight-bold">Total</h5>
+                            
+                            <h6>Rs.<span class="font-weight-bold" id="total"></span></h6>
+                        </div>
+
+                        <a href="/place-order" class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Cart End -->
+</section>
+
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            calculateSubTotal();
+            calculateTotalProductAmount();
+        }, false);
+
+        function calculateTotalAmount(proId) {
+            console.log("triggered")
+            const quantity = document.getElementById("quantity-" + proId).innerText
+            const price = document.getElementById("product-price-" + proId).innerText
+            console.log(price)
+            document.getElementById("total-price-" + proId).innerText = quantity * price
+            console.log("end")
+
+        }
+
+        function calculateSubTotal() {
+            const totalPriceElements = document.getElementsByClassName("total-price")
+            let total = 0
+            for (const item of totalPriceElements) {
+                total += parseInt(item.innerText)
+            }
+            console.log(total)
+            document.getElementById("sub-total").innerText = total
+        }
+
+        function calculateTotalProductAmount(){
+            const subTotal = parseInt(document.getElementById("sub-total").innerText)
+            const shipping = parseInt(document.getElementById("shipping").innerText)
+            document.getElementById("total").innerText = subTotal+shipping
+        }
+        function changeQuantity(cartId, proId, count) {
+            let quantity = parseInt(document.getElementById("quantity-" + proId).innerHTML)
+            count = parseInt(count)
+            $.ajax({
+                url: '/change-product-quantity',
+                data: {
+                    cart: cartId,
+                    product: proId,
+                    count: count,
+                    quantity: quantity
+                },
+                method: 'post',
+                success: (response) => {
+                    if (response.removeProduct) {
+                        alert("Product Removed from cart")
+                        document.getElementById("product-container-" + proId).remove();
+                    } else {
+                        document.getElementById("quantity-" + proId).innerHTML = quantity + count
+                        calculateTotalAmount(proId)
+                        calculateSubTotal()
+                        calculateTotalProductAmount()
+                    }
+
+                }
+            })
+        }
+
+        function deleteCartProduct(cartId, proId) {
+            $.ajax({
+                url: '/delete-cart-product',
+                data: {
+                    cart: cartId,
+                    product: proId
+                },
+                method: 'delete',
+                success: (response) => {
+                    document.getElementById("product-container-" + proId).remove();
+                    alert("Product Removed from cart")
+                }
+            })
+        }
+    </script>
+
+</body>
+
+</html>

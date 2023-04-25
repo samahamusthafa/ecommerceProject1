@@ -1,0 +1,143 @@
+<link rel='stylesheet' href='/stylesheets/login.css' />
+<div id="container">
+    <div class="card" id="card" style="height:850px">
+        <div class="front">
+
+            <p class="login_word">Sign Up</p>
+
+            <img src="https://drive.google.com/uc?export=view&id=1K5_tAX_taOQQ0wwmFx3P--V05kjvg4cu"
+                alt="person picture">
+            <form id="form" action="/signup" method="post" onsubmit="return validateInputs()">
+                <div>
+                    <div>
+                        <label for="name">Name</label>
+                        <input type="text" name="name" id="name" style="width: 500px; margin-left:10px" class="f1">
+                        <div class="error" style="color:red"></div>
+                    </div>
+                    <div>
+                        <label for="phone">Phone</label>
+                        <input type="text" name="phone" id="phone" style="width: 500px; margin-left:10px" class="f1">
+                        <div class="error" style="color:red"></div>
+                    </div>
+                    <div>
+                        <div>
+                            <label for="email">Email</label>
+                            <input type="email" name="email" id="email" style="width: 500px; margin-left:10px" class="f1">
+                            <div class="error" style="color:red"></div>
+                        </div>
+                        <div>
+
+                            <label for="password">Password</label>
+                            <input type="password" name="password" id="password" style="width: 500px; margin-right:30px" class="f1">
+                            <div class="error" style="color:red"></div>
+                        </div>
+                        <div>
+                            <label for="pw">Confirm Password</label>
+                            <input type="password" name="pw" id="pw" style="width: 500px; margin-right:90px" class="f1">
+                            <div class="error" style="color:red"></div>
+                        </div>
+                    </div>
+                    <button type="submit" class="f1" name="login" value="clicked">SIGNUP</button>
+                    {{!-- <div>
+                        <div id="error" style="color:red"></div>
+                    </div> --}}
+                    <div>
+                       <a href="/login">Already have account? <span onclick="flip()">Login</span></a>
+                    </div>
+                    
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const form=document.getElementById('form')
+    const name = document.getElementById("name")
+    const phone = document.getElementById("phone")
+    const email = document.getElementById("email")
+    const password = document.getElementById("password")
+    const pw = document.getElementById("pw")
+    
+
+
+    const setError = (element,message)=>{
+        const inputControl = element.parentElement
+        const errorDisplay = inputControl.querySelector('.error')
+
+        errorDisplay.innerText = message
+        inputControl.classList.add('error')
+        inputControl.classList.remove('success')
+    } 
+
+    const setSuccess = element=>{
+        const inputControl = element.parentElement
+        const errorDisplay = inputControl.querySelector('.error')
+
+        errorDisplay.innerText = '';
+        inputControl.classList.add('success')
+        inputControl.classList.remove('error')
+    } 
+
+    const isValidEmail = email =>{
+        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+    const validateInputs = () =>{
+        console.log("started")
+        const nameValue = name.value.trim()
+        const phoneValue = phone.value.trim()
+        const emailValue = email.value.trim()
+        const passwordValue = password.value.trim()
+        const pwValue = pw.value.trim()
+
+        if(nameValue === ''){
+            setError(name,'Name is required');
+            return false;
+        }else{
+            setSuccess(name);
+        }
+        console.log("middle")
+
+        if(emailValue === ''){
+            setError(email,'Email is required');
+            return false;
+        }else if(!isValidEmail(emailValue)){
+            setError(email,'Provide a valid email address');
+            return false;
+        }else{
+            setSuccess(email);
+        }
+
+        if(phoneValue === ''){
+            setError(phone,'phone is required');
+            return false;
+        }else{
+            setSuccess(phone);
+        }
+
+        if(passwordValue === ''){
+            setError(password,'Password is required');
+            return false;
+        }else if(passwordValue.length < 4){
+            setError(password,'Password must be at least 4 character.')
+            return false;
+        }else{
+            setSuccess(password);
+        }
+
+        if(pwValue === ''){
+            setError(pw,'Please confirm your password');
+            return false;
+        }else if(passwordValue !== pwValue){
+            setError(pw,"Passwords doesn't match");
+            return false;
+        }else{
+            setSuccess(pw);
+        }
+        console.log("end")
+        return true
+    }
+
+</script>

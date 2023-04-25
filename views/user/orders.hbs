@@ -1,0 +1,110 @@
+
+                <section>
+                    <h1 style="margin-left: 250px; background:#FFB30E; color:white; width:135px;">orders</h1>
+                    {{#each orders}}
+
+                    <div class="card mt-3 " style="width: 100%; margin-left:250px;">
+                        <div class="card-body">
+                            <div>
+                                Order ID:{{this._id}}
+                            </div>
+                            <div>
+                                Date:{{this.dateField}}
+                            </div>
+                            <div >
+                                Status:<span id="status-{{this._id}}">{{this.orderStatus}}</span>
+                            </div>
+                            <div>
+                                Payment Method:{{this.paymentMethod}}
+                            </div>
+
+
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target="#exampleModalLong-{{this._id}}">
+                                View Details
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="returnOrder('{{this._id}}')"
+                                id="return-{{this._id}}">
+                                Return Order
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModalLong-{{this._id}}" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">Order ID: {{this._id}}
+                                            </h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{#each this.products}}
+                                            <div class="mt-5">
+
+                                                <img src="/product-images/{{this.productId}}.jpg" alt=""
+                                                    style="width: 100px; height:100px">
+                                                <div style="margin-left: 110px; margin-top:-100px;">
+                                                    <div>
+                                                        <span class="font-weight-bold">{{this.name}}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span>Rs.{{this.price}}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span>Quantity:{{this.quantity}}</span>
+                                                    </div>
+                                                </div>
+
+
+
+
+
+
+
+                                            </div>
+                                            {{/each}}
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <p>Total Amount: <span class="font-weight-bold">Rs.{{this.total}}</span></p>
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {{/each}}
+                </section>
+                
+
+           
+
+    <script>
+        function returnOrder(orderId) {
+            $.ajax({
+                url: '/return-order/' + orderId,
+                method: 'patch',
+
+                success: (response) => {
+                    console.log(response)
+                    document.getElementById(`return-${orderId}`).innerText="returned"
+                    document.getElementById(`status-${orderId}`).innerText="returned"
+
+                    Swal.fire(response.message)
+                },
+                error: (err) => {
+                    console.log(err)
+                }
+            })
+        }
+
+    </script>

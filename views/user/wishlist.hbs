@@ -1,0 +1,66 @@
+
+                <section>
+                    <div class="container-fluid mt-5">
+                        <div class="row">
+                            {{#each products}}
+                            <div class="col-md-3 mb-4">
+                                <div class="card">
+                                    <a href="/product-details/{{this._id}}"><img class="card-img-top"
+                                            style="height: 400px; object-fit: cover;"
+                                            src="/product-images/{{this.images.[0]}}" alt="Card image cap"></a>
+
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{this.description}}</h5>
+                                        <p class="card-text">Rs.{{this.price}}</p>
+                                        <button onclick="addToCart('{{this._id}}')" class="btn btn-primary">Add To
+                                            Cart</button>
+                                        <button onclick="deleteWishlistProduct('{{this._id}}','{{this.product._id}}')"
+                                            class="btn btn-primary">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/each}}
+
+                        </div>
+                    </div>
+                </section>
+
+                
+                <script>
+                    function addToCart(proId) {
+                        $.ajax({
+                            url: '/add-to-cart/' + proId,
+                            method: 'get',
+                            success: (response) => {
+
+                                console.log(response)
+                                Swal.fire(response.message)
+                            },
+                            error: (err) => {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: err.responseJSON.message
+
+                                })
+                            }
+                        })
+                    }
+
+
+                    function deleteWishlistProduct(wishlistId, proId) {
+                        $.ajax({
+                            url: '/delete-wishlist-product',
+                            data: {
+                                wishlist: wishlistId,
+                                product: proId
+                            },
+                            method: 'delete',
+                            success: (response) => {
+                                document.getElementById("product-container-" + proId).remove();
+                                alert("Product Removed from wishlist")
+                            }
+                        })
+                    }
+                </script>
