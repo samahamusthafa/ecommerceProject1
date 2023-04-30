@@ -291,6 +291,8 @@
     <script>
         var orderId;
         $(document).ready(function () {
+            const total = document.getElementById("total")
+                const cartAmount = total.getAttribute("data-total")
             var settings = {
                 "url": "/create/orderId",
                 "method": "POST",
@@ -299,16 +301,16 @@
                     "Content-Type": "application/json"
                 },
                 "data": JSON.stringify({
-                    "amount": cartAmount
+                    "amount": cartAmount*100   
                 }),
             };
 
             //creates new orderId everytime
             $.ajax(settings).done(function (response) {
 
-                orderId = response.orderId;
+                orderId = response.id;
                 console.log(orderId);
-                $("button").show();
+                
             });
         });
         const paymentMethodRadioElements = document.getElementsByClassName("payment-method")
@@ -352,15 +354,59 @@
                         alert(response.razorpay_payment_id);
                         alert(response.razorpay_order_id);
                         alert(response.razorpay_signature)
-                        var settings = {
+
+                        $.ajax({
                             "url": "/api/payment/verify",
                             "method": "POST",
                             "timeout": 0,
                             "headers": {
                                 "Content-Type": "application/json"
                             },
+                            
                             "data": JSON.stringify({ response }),
-                        }
+                            success: ((response) => {
+                                if (response.signatureIsValid === "true") {
+                                    console.log("success")
+                                    $.ajax({
+                                        url: '/place-order',
+                                        data: {
+                                            address: paymentAddress,
+                                            paymentMethod: paymentMethod
+                                        },
+                                        method: 'post',
+                                        success: (response) => {
+
+                                            console.log(response)
+
+                                            Swal.fire(response.message).then((res) => {
+                                                window.location.replace('/orders')
+                                            })
+                                        },
+                                        error: (err) => {
+
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: err.responseJSON.message
+
+                                            })
+                                        }
+
+                                    })
+                                } else {
+                                    console.log("failed")
+                                    Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: err.responseJSON.message
+
+                                            })
+                                }
+                            })
+
+                        })
+
+
                     },
                     "theme": {
                         "color": "#3399cc"
@@ -442,6 +488,6 @@
 
     </script>
 
-    
+
 
 </body>

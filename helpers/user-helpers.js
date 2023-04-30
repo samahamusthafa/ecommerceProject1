@@ -128,7 +128,7 @@ module.exports = {
             try {
                 userData.password = await bcrypt.hash(userData.password, 10)
                 userData.pw = await bcrypt.hash(userData.pw, 10)
-                db.get().collection(collection.USER_COLLECTION).insertOne({ ...userData, isActive: true, isEmailVerified: false }).then((data) => {
+                db.get().collection(collection.USER_COLLECTION).insertOne({ ...userData, isActive: true, isEmailVerified: false ,isAdmin:false}).then((data) => {
                     resolve(data)
                 })
             } catch (error) {
@@ -396,7 +396,12 @@ module.exports = {
                 },
             ]).toArray()
             console.log(response)
-            resolve(response[0].products)
+            if(response.length){
+                resolve(response[0].products)
+            }else{
+                resolve([])
+            }
+            
         })
     },
 
@@ -406,7 +411,9 @@ module.exports = {
         return new Promise((resolve, reject) => {
             db.get().collection(collection.WISHLIST_COLLECTION).deleteOne({ _id: new ObjectId(details.wishlist), 'products.item': new ObjectId(details.product) }).then((response) => {
                 resolve(response)
-            })
+            }).catch((err) => {
+                reject(err);
+              });
         })
     },
 
@@ -437,7 +444,7 @@ module.exports = {
 
     getAllOrders: (userId) => {
         return new Promise(async (resolve, reject) => {
-            let orders = await db.get().collection(collection.ORDER_COLLECTION).find({ userId: userId }).toArray()
+            let orders = await db.get().collection(collection.ORDER_COLLECTION).find({ userId: userId }).sort({dateField:-1}).toArray()
             resolve(orders)
         })
     },
@@ -447,7 +454,7 @@ module.exports = {
 
     getAllOrderDetails: () => {
         return new Promise(async (resolve, reject) => {
-            let orders = await db.get().collection(collection.ORDER_COLLECTION).find().toArray()
+            let orders = await db.get().collection(collection.ORDER_COLLECTION).find().sort({dateField:-1}).toArray()
             resolve(orders)
         })
     },
@@ -563,8 +570,8 @@ module.exports = {
     addBanner: (banner,file) => {
         
         return new Promise((resolve, reject) => {
-            const { banner_type, description } = banner
-            db.get().collection(collection.BANNER_COLLECTION).insertOne({ banner_type, description,images: file.filename,isActive:true }).then((data) => {
+            const { banner_type} = banner
+            db.get().collection(collection.BANNER_COLLECTION).insertOne({ banner_type, images: file.filename,isActive:true }).then((data) => {
                 resolve(data)
             })
         })
@@ -579,10 +586,17 @@ module.exports = {
             resolve(banners)
         })
     },
+    getAllBannerImage: () => {
+        return new Promise(async (resolve, reject) => {
+            let banners = await db.get().collection(collection.BANNER_COLLECTION).find({isActive:true}).toArray()
+            console.log(banners)
+            resolve(banners)
+        })
+    },
 
     changeBannerStatus: (bannerId, status) => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.USER_COLLECTION).updateOne({ _id: new ObjectId(bannerId) }, { $set: { isActive: status } }).then((response) => {
+            db.get().collection(collection.BANNER_COLLECTION).updateOne({ _id: new ObjectId(bannerId) }, { $set: { isActive: status } }).then((response) => {
                 resolve({ message: "success" })
             })
         })

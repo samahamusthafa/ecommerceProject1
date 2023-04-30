@@ -39,7 +39,8 @@ router.get('/home', async function (req, res) {
   }
   categoryHelpers.getAllCategories().then((categories) => {
     productHelpers.getProductsByLimit(4).then((products) => {
-      userHelpers.getAllBanners().then((banners) => {
+      userHelpers.getAllBannerImage().then((banners) => {
+        console.log(banners)
         res.render('user/home', { user, categories, products, admin: false, cartCount,banners, })
       })
      
@@ -184,7 +185,7 @@ router.get('/add-to-cart/:id', verifyLogin, (req, res) => {
   userHelpers.addToCart(req.params.id, req.session.user._id).then((response) => {
     res.json(response)
   }).catch((error) => {
-    res.status(501).json(error)
+    res.json(error)
   })
 
 })
@@ -244,19 +245,22 @@ router.post('/place-order', async (req, res) => {
   console.log(response)
   res.json(response)
 
-  // console.log("create orderId request", req.body);
-  // var options = {
-  //   amount: req.body.amount,  // amount in the smallest currency unit
-  //   currency: "INR",
-  //   receipt: "rcp1"
-  // };
-  // instance.orders.create(options, function (err, order) {
-  //   console.log(order);
-  //   res.send({ orderId: order.id })
+  
   });
 
 
-
+router.post('/create/orderId',async(req,res)=>{
+  const order = await instance.orders.create({
+    amount: req.body.amount,
+    currency: "INR",
+    receipt: "receipt#1",
+    notes: {
+      key1: "value3",
+      key2: "value2"
+    }
+  })
+  res.json(order)
+})
 
 
 
@@ -267,7 +271,7 @@ router.post('/place-order', async (req, res) => {
 router.post("/api/payment/verify", async(req, res) => {
 
 
-
+console.log(req.body)
 
   let body = req.body.response.razorpay_order_id + "|" + req.body.response.razorpay_payment_id;
 
@@ -285,7 +289,7 @@ router.post("/api/payment/verify", async(req, res) => {
   }
     
    
-  res.send(response);
+  res.json(response);
   
 });
 
@@ -351,6 +355,8 @@ router.post('/add-to-wishlist/:id', verifyLogin, (req, res) => {
 router.delete('/delete-wishlist-product', (req, res) => {
   userHelpers.deleteWishlistProduct(req.body).then((response) => {
     res.json(response)
+  }).catch((err)=>{
+    res.json(err)
   })
 })
 

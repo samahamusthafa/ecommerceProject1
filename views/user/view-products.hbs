@@ -70,17 +70,18 @@
                             class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
             </div>
+            
+
             <div class="col-lg-6 col-6 text-left">
-                <form action="" onsubmit="return searchProducts(event)">
+                <form action="" onsubmit="return Products(event)">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search for products">
-
                         <button type="submit">
-                            <div class="input-group-append">
-                                <span class="input-group-text bg-transparent text-primary">
-                                    <i class="fa fa-search"></i>
-                                </span>
-                            </div>
+                        <div class="input-group-append">
+                            <span class="input-group-text bg-transparent text-primary">
+                                <i class="fa fa-search"></i>
+                            </span>
+                        </div>
                         </button>
                     </div>
                 </form>
@@ -210,9 +211,9 @@
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                            <li class="page-item"><a class="page-link" href="/products?page=1&search=">1</a></li>
-                            <li class="page-item"><a class="page-link" href="/products?page=2&search=">2</a></li>
-                            <li class="page-item"><a class="page-link" href="/products?page=3&search=">3</a></li>
+                            <li class="page-item"><a class="page-link" href="/products?page=1&=">1</a></li>
+                            <li class="page-item"><a class="page-link" href="/products?page=2&=">2</a></li>
+                            <li class="page-item"><a class="page-link" href="/products?page=3&=">3</a></li>
                             <li class="page-item"><a class="page-link" href="#">Next</a></li>
                         </ul>
                     </nav>
@@ -324,7 +325,7 @@
     </section>
 
     <script>
-        function searchProducts(e) {
+        function Products(e) {
             e.preventDefault();
             console.log(e.target[0].value)
             window.location.replace(`/products?page=1&search=${e.target[0].value}`)

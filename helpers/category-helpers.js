@@ -10,6 +10,9 @@ module.exports = {
         db.get().collection(collection.CATEGORY_COLLECTION).insertOne({...category,isDelete:false,path:file.filename}).then((data) => {
             
             resolve(data.insertedId)
+        }).catch((err)=>{
+            
+            reject({message:"Already added category!"})
         })
 
        })

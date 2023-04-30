@@ -4,7 +4,6 @@ const productHelpers = require('../helpers/product-helpers')
 const categoryHelpers = require('../helpers/category-helpers')
 const userHelpers = require('../helpers/user-helpers')
 const path = require('path');
-
 const multer = require('multer')
 
 
@@ -18,8 +17,9 @@ const productStorage = multer.diskStorage({
     cb(null, file.fieldname + '-' + uniqueSuffix + '.' + file.mimetype.split('/').slice(-1))
   }
 })
-
 const uploadProduct = multer({ storage: productStorage })
+
+
 
 const bannerStorage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -30,7 +30,6 @@ const bannerStorage = multer.diskStorage({
     cb(null, file.fieldname + '-' + uniqueSuffix + '.' + file.mimetype.split('/').slice(-1))
   }
 })
-
 const uploadBanner = multer({ storage: bannerStorage })
 
 
@@ -43,7 +42,6 @@ const categoryStorage = multer.diskStorage({
     cb(null, file.fieldname + '-' + uniqueSuffix + '.' + file.mimetype.split('/').slice(-1))
   }
 })
-
 const uploadCategory = multer({ storage: categoryStorage })
 
 
@@ -55,7 +53,6 @@ const uploadCategory = multer({ storage: categoryStorage })
 router.get('/products', function (req, res) {
   const { page, search, cat } = req.query
   productHelpers.getAllProducts(page, search, cat).then((products) => {
-    // console.log(products.length)
     res.render('admin/view-products', { products, admin: true,layout:'admin-layout'})
   })
 })
@@ -63,8 +60,6 @@ router.get('/products', function (req, res) {
 
 
 router.get('/home', async function (req, res) {
-  
-  
   const { topProducts,
     totalSales,
     totalAmount,
@@ -106,14 +101,9 @@ router.post('/add-product', uploadProduct.array('image', 4), function (req, res)
   console.log(req.body, "body")
   console.log(req.file)
   console.log(req.files)
-
-  productHelpers.addProduct(req.files, req.body).then((id) => {
-
+productHelpers.addProduct(req.files, req.body).then((id) => {
     res.redirect('/admin/products')
-   
-  
-    
-  })
+   })
 })
 
 
@@ -184,6 +174,8 @@ router.post('/add-category', uploadCategory.single('image'), async (req, res) =>
   categoryHelpers.addCategory(req.body,req.file).then( (id) => {
     res.redirect('/admin/categories')
 
+  }).catch((err)=>{
+    res.redirect('/admin/add-category')
   })
 
 })
@@ -328,7 +320,7 @@ router.patch('/change-banner-status/:id', (req, res) => {
   userHelpers.changeBannerStatus(req.params.id, status).then((response) => {
     res.json(response)
   })
-  console.log(typeof status, status)
+  
 })
 
 
