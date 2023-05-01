@@ -146,9 +146,9 @@
                     quantity: quantity
                 },
                 method: 'post',
-                success: (response) => {
+                success: (response)=> {
                     if (response.removeProduct) {
-                        alert("Product Removed from cart")
+                        alert("Product Removed from cart");
                         document.getElementById("product-container-" + proId).remove();
                     } else {
                         document.getElementById("quantity-" + proId).innerHTML = quantity + count
@@ -169,7 +169,7 @@
                     product: proId
                 },
                 method: 'delete',
-                success: (response) => {
+                success: (response)=>{
                     document.getElementById("product-container-" + proId).remove();
                     alert("Product Removed from cart")
                 }
@@ -177,6 +177,3 @@
         }
     </script>
 
-</body>
-
-</html>

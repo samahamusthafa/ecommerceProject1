@@ -6,7 +6,7 @@ const logger = require('morgan');
 const hbs = require('express-handlebars')
 const db = require('./config/connection')
 const session = require('express-session')
-const fileUpload = require('express-fileupload')
+// const fileUpload = require('express-fileupload')
 // ...
 
 
