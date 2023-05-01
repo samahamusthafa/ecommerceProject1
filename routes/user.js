@@ -13,8 +13,8 @@ const collection = require('../config/collection');
 const { Collection, ObjectId } = require('mongodb');
 
 const instance = new Razorpay({
-  key_id: 'rzp_test_uUYOED9bCKWj7S',
-  key_secret: 'ynyFtMGHiP7mW7HsQv1Zeguf',
+  key_id:process.env.KEY_ID,
+  key_secret:process.env.KEY_SECRET,
 
 });
 
@@ -391,7 +391,7 @@ router.get('/apply-coupon/:couponId', (req, res) => {
 })
 
 router.get('/about-us', (req, res) => {
-  res.render('user/contact-us')
+  res.render('user/contact-us',{layout:'user-layout'})
 })
 
 

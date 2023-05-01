@@ -7,6 +7,13 @@ const path = require('path');
 const multer = require('multer')
 
 
+const adminVerify = (req,res,next)=>{
+  if(req.session.admin){
+    next();
+  }else{
+    res.redirect('/login')
+  }
+}
 
 const productStorage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -50,7 +57,7 @@ const uploadCategory = multer({ storage: categoryStorage })
 
 
 
-router.get('/products', function (req, res) {
+router.get('/products',adminVerify, function (req, res) {
   const { page, search, cat } = req.query
   productHelpers.getAllProducts(page, search, cat).then((products) => {
     res.render('admin/view-products', { products, admin: true,layout:'admin-layout'})
@@ -59,18 +66,19 @@ router.get('/products', function (req, res) {
 
 
 
-router.get('/home', async function (req, res) {
-  const { topProducts,
-    totalSales,
-    totalAmount,
-    totalCODSales,
-    totalONLINESales,
-    totalConfirmedOrder,
-    totalReturnedOrder,
-    totalCanceledOrder,
-    totalDeliveredOrder } = await productHelpers.getSalesDetails()
-    console.log(totalAmount)
-  if (req.session.admin) {
+router.get('/home',adminVerify,async function (req, res) {
+  
+  
+    const { topProducts,
+      totalSales,
+      totalAmount,
+      totalCODSales,
+      totalONLINESales,
+      totalConfirmedOrder,
+      totalReturnedOrder,
+      totalCanceledOrder,
+      totalDeliveredOrder } = await productHelpers.getSalesDetails()
+      console.log(totalAmount)
     console.log("its here");
     res.render("admin/home", {layout:'admin-layout',
       admin: true,
@@ -83,15 +91,12 @@ router.get('/home', async function (req, res) {
       totalCanceledOrder,
       totalDeliveredOrder
     })
-  } else {
-    console.log();
-    res.redirect('/login')
-  }
+  
 })
 
 
 
-router.get('/add-product', async function (req, res) {
+router.get('/add-product',adminVerify, async function (req, res) {
   let categories = await categoryHelpers.getAllCategories()
   res.render("admin/add-product", { admin: true, categories,layout:'admin-layout' })
 })
@@ -118,7 +123,7 @@ router.get('/delete-product/:id', (req, res) => {
 
 
 
-router.get('/edit-product/:id', async (req, res) => {
+router.get('/edit-product/:id',adminVerify, async (req, res) => {
   let product = await productHelpers.getProductDetails(req.params.id)
   const categories = await categoryHelpers.getAllCategories()
   console.log(product)
@@ -138,9 +143,26 @@ router.post('/edit-product/:id', (req, res) => {
   })
 })
 
+router.get('/edit-coupon/:id',adminVerify, async (req, res) => {
+  let coupon = await userHelpers.getCouponDetails(req.params.id)
+  
+ 
+  res.render('admin/edit-coupon', { admin: true, coupon,layout:'admin-layout' }) 
+})
 
 
-router.get('/categories', function (req, res) {
+
+router.post('/edit-coupon/:id', (req, res) => {
+  let id = req.params.id
+  userHelpers.updateCoupon(req.params.id, req.body).then(() => {
+    
+    res.redirect('/admin/coupon-list')
+  })
+})
+
+
+
+router.get('/categories',adminVerify, function (req, res) {
   categoryHelpers.getAllCategories().then((categories) => {
     res.render('admin/view-categories', { categories, admin: true,layout:'admin-layout' })
   })
@@ -148,7 +170,7 @@ router.get('/categories', function (req, res) {
 
 
 
-router.get('/add-category', function (req, res) {
+router.get('/add-category',adminVerify, function (req, res) {
   res.render("admin/add-category", { admin: true,layout:'admin-layout'})
 })
 
@@ -192,7 +214,7 @@ router.get('/delete-category/:id', (req, res) => {
 
 
 
-router.get('/edit-category/:id', async (req, res) => {
+router.get('/edit-category/:id',adminVerify, async (req, res) => {
   let category = await categoryHelpers.getCategoryDetails(req.params.id)
   console.log(category)
   res.render('admin/edit-category', { admin: true, category,layout:'admin-layout'})
@@ -214,7 +236,7 @@ router.post('/edit-category/:id', (req, res) => {
 
 
 
-router.get('/user-list', function (req, res) {
+router.get('/user-list',adminVerify, function (req, res) {
   userHelpers.getAllUsers().then((users) => {
     res.render('admin/view-users', { users, admin: true,layout:'admin-layout'})
   })
@@ -222,7 +244,7 @@ router.get('/user-list', function (req, res) {
 
 
 
-router.patch('/change-user-status/:id', (req, res) => {
+router.patch('/change-user-status/:id',adminVerify, (req, res) => {
   let status = req.body.status
   if (status === "true") {
     status = true
@@ -238,7 +260,7 @@ router.patch('/change-user-status/:id', (req, res) => {
 
 
 
-router.get('/orders', async (req, res) => {
+router.get('/orders',adminVerify, async (req, res) => {
   await userHelpers.getAllOrderDetails().then((orders) => {
     res.render('admin/view-orders', { orders,layout:'admin-layout'})
   })
@@ -269,7 +291,7 @@ router.patch('/-order/:id', async (req, res) => {
 
 
 
-router.get('/add-coupon', (req, res) => {
+router.get('/add-coupon',adminVerify, (req, res) => {
   res.render('admin/add-coupon',{layout:'admin-layout'})
 })
 
@@ -281,13 +303,13 @@ router.post('/add-coupon', async (req, res) => {
   })
 })
 
-router.get('/edit-coupon/:id',(req,res)=>{
-  res.render('admin/edit-coupon',{layout:'admin-layout'})
-})
+// router.get('/edit-coupon/:id',adminVerify,(req,res)=>{
+//   res.render('admin/edit-coupon',{layout:'admin-layout'})
+// })
 
 
 
-router.get('/banners', async (req, res) => {
+router.get('/banners',adminVerify, async (req, res) => {
   await userHelpers.getAllBanners().then((banners) => {
     res.render('admin/list-banner', { banners,layout:'admin-layout'})
   })
@@ -295,7 +317,7 @@ router.get('/banners', async (req, res) => {
 
 
 
-router.get('/add-banner', async (req, res) => {
+router.get('/add-banner',adminVerify, async (req, res) => {
   res.render('admin/add-banner',{layout:'admin-layout'})
 })
 
@@ -325,20 +347,24 @@ router.patch('/change-banner-status/:id', (req, res) => {
 
 
 
-router.get('/coupon-list', async (req, res) => {
+router.get('/coupon-list',adminVerify, async (req, res) => {
   await userHelpers.getAllCoupons().then((coupons) => {
     res.render('admin/list-coupon', { coupons,layout:'admin-layout' })
   })
 
 })
 
-router.get('/salesreport', async (req, res) => {
+router.get('/salesreport',adminVerify, async (req, res) => {
   const { start, end } = req.query
   await userHelpers.getAllOrdersByDate(start, end).then((orders) => {
     res.render('admin/sales', { orders,layout:'admin-layout' })
   })
 
 
+})
+router.get('/logout', (req, res) => {
+  req.session.admin = null
+  res.redirect('/login')
 })
 
 

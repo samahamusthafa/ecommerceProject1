@@ -23,7 +23,8 @@ module.exports = {
 
     getAllProducts: (pageNo, search, cat) => {
         return new Promise(async (resolve, reject) => {
-            let query = {isDelete:false}
+            let query = {isDelete:false,category: { $ne: null }}
+
             if (search) {
                 query.name = { $regex: search, $options: "i" }
             }
@@ -42,7 +43,8 @@ module.exports = {
 
     getProductsByLimit: (limit) => {
         return new Promise(async (resolve, reject) => {
-            let products = await db.get().collection(collection.PRODUCT_COLLECTION).find().limit(limit).toArray()
+            let query = {isDelete:false,category: { $ne: null }}
+            let products = await db.get().collection(collection.PRODUCT_COLLECTION).find(query).limit(limit).toArray()
             resolve(products)
         })
     },

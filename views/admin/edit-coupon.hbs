@@ -194,7 +194,7 @@
       </aside>
 
 <div class="container-xxl flex-grow-1 container-p-y">
-      <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Coupon/</span> Add Coupon</h4>
+      <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Coupon/</span> Edit Coupon</h4>
 
       <!-- Basic Layout & Basic with Icons -->
       <div class="row">
@@ -203,12 +203,12 @@
           <div class="card mb-4">
             <br>
             <div class="card-body">
-              <form method="post" action="/admin/add-coupon" class="row g-3 needs-validation" novalidate>
+              <form method="post" action="/admin/edit-coupon/{{coupon._id}}" class="row g-3 needs-validation" novalidate>
                 <div class="row mb-3">
                   <label class="col-sm-2 col-form-label" for="basic-default-name">Coupon Name</label>
                   <div class="col-sm-10">
                     <input type="text" class="form-control" name="name" id="basic-default-name" placeholder=""
-                      required />
+                      required value="{{coupon.name}}"/>
                     <div class="invalid-feedback">Please enter Coupon Name</div>
                   </div>
                 </div>
@@ -216,7 +216,7 @@
                   <label class="col-sm-2 col-form-label" for="basic-default-name">Coupon Description</label>
                   <div class="col-sm-10">
                     <input type="text" class="form-control" name="description" id="basic-default-name" placeholder=""
-                      required />
+                      required value="{{coupon.description}}"/>
                     <div class="invalid-feedback">Please Enter Coupon Description</div>
                   </div>
                 </div>
@@ -224,7 +224,7 @@
                   <label class="col-sm-2 col-form-label" for="basic-default-name">Discount Percentage</label>
                   <div class="col-sm-10">
                     <input type="text" class="form-control" name="discount_percentage" id="basic-default-name"
-                      placeholder="" required />
+                      placeholder="" required value="{{coupon.discount_percentage}}"/>
                     <div class="invalid-feedback">Please Enter Discount Percentage</div>
                   </div>
                 </div>
@@ -233,7 +233,7 @@
                   <label class="col-sm-2 col-form-label" for="basic-default-name">Discount Minimum Amount</label>
                   <div class="col-sm-10">
                     <input type="text" class="form-control" name="min_amount" id="basic-default-name" placeholder=""
-                      required />
+                      required value="{{coupon.min_amount}}"/>
                     <div class="invalid-feedback">Please Enter Discount Minimum Amount</div>
                   </div>
                 </div>
@@ -242,7 +242,7 @@
                   <label class="col-sm-2 col-form-label" for="basic-default-name">Discount Price</label>
                   <div class="col-sm-10">
                     <input type="text" class="form-control" name="discountprice" id="basic-default-name" placeholder=""
-                      required />
+                      required value="{{coupon.maxdiscountprice}}"/>
                     <div class="invalid-feedback">Please enter Discount Price</div>
                   </div>
                 </div>
@@ -250,7 +250,7 @@
                   <label class="col-sm-2 col-form-label" for="basic-default-name">Date</label>
                   <div class="col-sm-10">
                     <input type="date" class="form-control" name="date" id="basic-default-name" placeholder=""
-                      required />
+                      required value="{{coupon.date}}"/>
                     <div class="invalid-feedback">Please Enter Expiry Date</div>
                   </div>
                 </div>
@@ -258,7 +258,7 @@
                   <label class="col-sm-2 col-form-label" for="basic-default-name">Code</label>
                   <div class="col-sm-10">
                     <input type="text" class="form-control" name="code" id="basic-default-name" placeholder=""
-                      required />
+                      required value="{{coupon.code}}"/>
                     <div class="invalid-feedback">Please Enter Coupon Code</div>
                   </div>
                 </div>

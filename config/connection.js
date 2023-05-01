@@ -1,3 +1,4 @@
+require("dotenv").config()
 const mongoClient = require('mongodb').MongoClient
 
 const state = {
@@ -5,7 +6,7 @@ const state = {
 }
 
 module.exports.connect = async function (done) {
-    const url = 'mongodb://127.0.0.1:27017'
+    const url = process.env.MONGO_CONNECTION
     const client = new mongoClient(url);
     
     const dbname = 'shopping'

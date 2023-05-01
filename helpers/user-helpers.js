@@ -420,10 +420,11 @@ module.exports = {
 
 
     createOrder: (userId, paymentMethod, paymentAddress, session) => {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async(resolve, reject) => {
             try {
                 const cartProducts = await getCartProductsforOrder(userId)
-                let total = await getTotalAmount(userId)
+                var total̥̥̥ = await getTotalAmount(userId)
+                console.log('total̥̥̥: ', total̥̥̥);
                 const currentDate = new Date();
                 const coupon = session.coupon || {}
                 if (coupon) {
@@ -522,6 +523,32 @@ module.exports = {
             })
         })
     },
+    getCouponDetails: (couponId) => {
+        return new Promise(async (resolve, reject) => {
+            await db.get().collection(collection.COUPON_COLLECTION).findOne({ _id: new ObjectId(couponId) }).then((coupon) => {
+                resolve(coupon)
+            })
+        })
+    },
+    updateCoupon: (couponId, couponDetails) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.COUPON_COLLECTION).updateOne({ _id: new ObjectId(couponId) }, {
+                $set: {
+                    name: couponDetails.name,
+                    description: couponDetails.description,
+                    date: parseInt(couponDetails.date),
+                    discount_percentage: couponDetails.parseFloat(discount_percentage),
+                    maxdiscountprice: parseInt(couponDetails.discountprice),
+                    min_amount: couponDetails.parseInt(min_amount),
+                    code:couponDetails.code
+                }
+            }).then((response) => {
+                resolve()
+            })
+        })
+    },
+
+
 
 
 
