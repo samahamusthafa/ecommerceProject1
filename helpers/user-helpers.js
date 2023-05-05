@@ -10,6 +10,7 @@ const instance = new Razorpay({
     key_secret: 'ynyFtMGHiP7mW7HsQv1Zeguf',
 });
 
+
 const getTotalAmount = (userId) => {
     return new Promise(async (resolve, reject) => {
         let total = await db.get().collection(collection.CART_COLLECTION).aggregate([
@@ -44,11 +45,12 @@ const getTotalAmount = (userId) => {
                     total: { $sum: { $multiply: ['$quantity', '$product.price'] } }
                 }
             }
-       ]).toArray()
+        ]).toArray()
         console.log(total[0].total)
         resolve(total[0].total)
     })
 }
+
 
 
 
@@ -80,10 +82,12 @@ const getCartProducts = (userId) => {
                     item: 1, quantity: 1, product: { $arrayElemAt: ['$product', 0] }
                 }
             }
-       ]).toArray()
-            resolve(cartItems)
-        })
+        ]).toArray()
+        resolve(cartItems)
+    })
 }
+
+
 
 
 
@@ -116,9 +120,11 @@ const getCartProductsforOrder = (userId) => {
                 }
             }
         ]).toArray()
-       resolve(cartItems)
-   })
+        resolve(cartItems)
+    })
 }
+
+
 
 
 
@@ -128,7 +134,7 @@ module.exports = {
             try {
                 userData.password = await bcrypt.hash(userData.password, 10)
                 userData.pw = await bcrypt.hash(userData.pw, 10)
-                db.get().collection(collection.USER_COLLECTION).insertOne({ ...userData, isActive: true, isEmailVerified: false ,isAdmin:false}).then((data) => {
+                db.get().collection(collection.USER_COLLECTION).insertOne({ ...userData, isActive: true, isEmailVerified: false, isAdmin: false }).then((data) => {
                     resolve(data)
                 })
             } catch (error) {
@@ -152,7 +158,7 @@ module.exports = {
 
     getAllUsers: () => {
         return new Promise(async (resolve, reject) => {
-            let Users = await db.get().collection(collection.USER_COLLECTION).find({isAdmin:false}).toArray()
+            let Users = await db.get().collection(collection.USER_COLLECTION).find({ isAdmin: false }).toArray()
             resolve(Users)
         })
     },
@@ -212,6 +218,7 @@ module.exports = {
 
 
 
+
     addToCart: (proId, userId) => {
         let proObj = {
             item: new ObjectId(proId),
@@ -225,7 +232,7 @@ module.exports = {
                     reject({ message: "Item already exist in cart" })
                 } else {
                     db.get().collection(collection.CART_COLLECTION).updateOne({ user: new ObjectId(userId) }, {
-                          $push: { products: proObj }
+                        $push: { products: proObj }
                     }).then((response) => {
                         resolve({ message: "Item added to cart successfully!" })
                     })
@@ -245,6 +252,8 @@ module.exports = {
 
 
     getCartProducts: getCartProducts,
+
+
     getCartCount: (userId) => {
         return new Promise(async (resolve, reject) => {
             let count = 0
@@ -278,6 +287,7 @@ module.exports = {
             }
         })
     },
+
 
 
 
@@ -364,12 +374,13 @@ module.exports = {
                 } else {
                     resolve({ message: "product already exist in wishlist" });
                 }
-           }).catch((err) => {
+            }).catch((err) => {
                 console.log(err)
                 reject(err);
             });
         });
     },
+
 
 
 
@@ -396,46 +407,55 @@ module.exports = {
                 },
             ]).toArray()
             console.log(response)
-            if(response.length){
+            if (response.length) {
                 resolve(response[0].products)
-            }else{
+            } else {
                 resolve([])
             }
-            
         })
     },
 
 
 
-    deleteWishlistProduct: (details) => {
+
+    deleteWishlistProduct: (userId, productId) => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.WISHLIST_COLLECTION).deleteOne({ _id: new ObjectId(details.wishlist), 'products.item': new ObjectId(details.product) }).then((response) => {
+            db.get().collection(collection.WISHLIST_COLLECTION).updateOne({ user: new ObjectId(userId) }, { $pull: { products: new ObjectId(productId) } }).then((response) => {
                 resolve(response)
             }).catch((err) => {
                 reject(err);
-              });
+            });
         })
     },
 
 
 
     createOrder: (userId, paymentMethod, paymentAddress, session) => {
-        return new Promise(async(resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 const cartProducts = await getCartProductsforOrder(userId)
-                var total̥̥̥ = await getTotalAmount(userId)
+                let total̥̥̥ = await getTotalAmount(userId)
                 console.log('total̥̥̥: ', total̥̥̥);
                 const currentDate = new Date();
-                const coupon = session.coupon || {}
+                const coupon = session.coupon
+                console.log(coupon)
                 if (coupon) {
                     total = total * (100 - coupon.discount_percentage) / 100
                 }
+                const totalAmount = total + 10
                 await db.get().collection(collection.ORDER_COLLECTION).insertOne({
-                    userId: userId, paymentMethod: paymentMethod, paymentAddress:new ObjectId(paymentAddress), products: cartProducts, total: total + 10, dateField: currentDate, orderStatus: "confirmed", couponCode: coupon.code, couponPercentage: coupon.coupon_percentage
+                    userId: userId,
+                    paymentMethod: paymentMethod,
+                    paymentAddress: new ObjectId(paymentAddress),
+                    products: cartProducts, total: totalAmount,
+                    dateField: currentDate,
+                    orderStatus: "confirmed",
+                    couponCode: coupon ? coupon.code : null,
+                    couponPercentage: coupon ? coupon.coupon_percentage : null
                 })
                 await db.get().collection(collection.CART_COLLECTION).deleteOne({ user: new ObjectId(userId) })
                 resolve({ message: 'Order Placed Successfully' })
-              } catch (error) {
+            } catch (error) {
                 reject(error)
             }
         })
@@ -445,7 +465,7 @@ module.exports = {
 
     getAllOrders: (userId) => {
         return new Promise(async (resolve, reject) => {
-            let orders = await db.get().collection(collection.ORDER_COLLECTION).find({ userId: userId }).sort({dateField:-1}).toArray()
+            let orders = await db.get().collection(collection.ORDER_COLLECTION).find({ userId: userId }).sort({ dateField: -1 }).toArray()
             resolve(orders)
         })
     },
@@ -455,27 +475,30 @@ module.exports = {
 
     getAllOrderDetails: () => {
         return new Promise(async (resolve, reject) => {
-            let orders = await db.get().collection(collection.ORDER_COLLECTION).find().sort({dateField:-1}).toArray()
-            resolve(orders)
-        })
-    },
-    getAllOrdersByDate: (start,end) => {
-        return new Promise(async (resolve, reject) => {
-            let orders = await db.get().collection(collection.ORDER_COLLECTION).aggregate([{$match:{dateField:{$gte:new Date(start),$lte:new Date(end)}}},{
-                $lookup:
-                  {
-                    from: 'address',
-                    localField:'paymentAddress',
-                    foreignField: '_id',
-                    as: 'address'
-                  }
-             },{$unwind:"$address"}]).toArray()
-             console.log(orders)
+            let orders = await db.get().collection(collection.ORDER_COLLECTION).find().sort({ dateField: -1 }).toArray()
             resolve(orders)
         })
     },
 
-    
+
+
+    getAllOrdersByDate: (start, end) => {
+        return new Promise(async (resolve, reject) => {
+            let orders = await db.get().collection(collection.ORDER_COLLECTION).aggregate([{ $match: { dateField: { $gte: new Date(start), $lte: new Date(end) } } }, {
+                $lookup:
+                {
+                    from: 'address',
+                    localField: 'paymentAddress',
+                    foreignField: '_id',
+                    as: 'address'
+                }
+            }, { $unwind: "$address" }]).toArray()
+            console.log(orders)
+            resolve(orders)
+        })
+    },
+
+
 
     returnOrder: (orderId) => {
         return new Promise(async (resolve, reject) => {
@@ -523,6 +546,10 @@ module.exports = {
             })
         })
     },
+
+
+
+
     getCouponDetails: (couponId) => {
         return new Promise(async (resolve, reject) => {
             await db.get().collection(collection.COUPON_COLLECTION).findOne({ _id: new ObjectId(couponId) }).then((coupon) => {
@@ -530,6 +557,10 @@ module.exports = {
             })
         })
     },
+
+
+
+
     updateCoupon: (couponId, couponDetails) => {
         return new Promise((resolve, reject) => {
             db.get().collection(collection.COUPON_COLLECTION).updateOne({ _id: new ObjectId(couponId) }, {
@@ -540,7 +571,7 @@ module.exports = {
                     discount_percentage: couponDetails.parseFloat(discount_percentage),
                     maxdiscountprice: parseInt(couponDetails.discountprice),
                     min_amount: couponDetails.parseInt(min_amount),
-                    code:couponDetails.code
+                    code: couponDetails.code
                 }
             }).then((response) => {
                 resolve()
@@ -563,7 +594,7 @@ module.exports = {
                 console.log(order);
                 resolve(order)
             })
-       })
+        })
     },
 
 
@@ -573,7 +604,7 @@ module.exports = {
             db.get().collection(collection.COUPON_COLLECTION).findOne({ code: couponCode }).then((response) => {
                 if (!response) {
                     reject({ message: "Invalid coupon code!" })
-                }else if (new Date(response.date) < new Date()) {
+                } else if (new Date(response.date) < new Date()) {
                     resolve(response)
                 } else {
                     reject({ message: "Coupon expired!" })
@@ -583,7 +614,7 @@ module.exports = {
     },
 
 
-    
+
 
     getAllCoupons: () => {
         return new Promise((resolve, reject) => {
@@ -594,15 +625,15 @@ module.exports = {
 
 
 
-    addBanner: (banner,file) => {
-        
+    addBanner: (banner, file) => {
         return new Promise((resolve, reject) => {
-            const { banner_type} = banner
-            db.get().collection(collection.BANNER_COLLECTION).insertOne({ banner_type, images: file.filename,isActive:true }).then((data) => {
+            const { banner_type } = banner
+            db.get().collection(collection.BANNER_COLLECTION).insertOne({ banner_type, images: file.filename, isActive: true }).then((data) => {
                 resolve(data)
             })
         })
     },
+        
 
 
 
@@ -613,13 +644,18 @@ module.exports = {
             resolve(banners)
         })
     },
+
+
+
     getAllBannerImage: () => {
         return new Promise(async (resolve, reject) => {
-            let banners = await db.get().collection(collection.BANNER_COLLECTION).find({isActive:true}).toArray()
+            let banners = await db.get().collection(collection.BANNER_COLLECTION).find({ isActive: true }).toArray()
             console.log(banners)
             resolve(banners)
         })
     },
+
+    
 
     changeBannerStatus: (bannerId, status) => {
         return new Promise((resolve, reject) => {

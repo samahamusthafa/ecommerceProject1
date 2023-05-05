@@ -15,6 +15,8 @@ const adminVerify = (req,res,next)=>{
   }
 }
 
+
+//image upload using multer
 const productStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, './public/product-images/')
@@ -56,7 +58,7 @@ const uploadCategory = multer({ storage: categoryStorage })
 
 
 
-
+//product
 router.get('/products',adminVerify, function (req, res) {
   const { page, search, cat } = req.query
   productHelpers.getAllProducts(page, search, cat).then((products) => {
@@ -65,11 +67,9 @@ router.get('/products',adminVerify, function (req, res) {
 })
 
 
-
+//home
 router.get('/home',adminVerify,async function (req, res) {
-  
-  
-    const { topProducts,
+  const { topProducts,
       totalSales,
       totalAmount,
       totalCODSales,
@@ -91,11 +91,10 @@ router.get('/home',adminVerify,async function (req, res) {
       totalCanceledOrder,
       totalDeliveredOrder
     })
-  
 })
 
 
-
+//add-product
 router.get('/add-product',adminVerify, async function (req, res) {
   let categories = await categoryHelpers.getAllCategories()
   res.render("admin/add-product", { admin: true, categories,layout:'admin-layout' })
@@ -112,7 +111,7 @@ productHelpers.addProduct(req.files, req.body).then((id) => {
 })
 
 
-
+//delete-product
 router.get('/delete-product/:id', (req, res) => {
   let proId = req.params.id
   console.log(proId)
@@ -122,7 +121,7 @@ router.get('/delete-product/:id', (req, res) => {
 })
 
 
-
+//edit-product
 router.get('/edit-product/:id',adminVerify, async (req, res) => {
   let product = await productHelpers.getProductDetails(req.params.id)
   const categories = await categoryHelpers.getAllCategories()
@@ -143,11 +142,11 @@ router.post('/edit-product/:id', (req, res) => {
   })
 })
 
+
+//edit-coupon
 router.get('/edit-coupon/:id',adminVerify, async (req, res) => {
   let coupon = await userHelpers.getCouponDetails(req.params.id)
-  
- 
-  res.render('admin/edit-coupon', { admin: true, coupon,layout:'admin-layout' }) 
+     res.render('admin/edit-coupon', { admin: true, coupon,layout:'admin-layout' }) 
 })
 
 
@@ -155,13 +154,12 @@ router.get('/edit-coupon/:id',adminVerify, async (req, res) => {
 router.post('/edit-coupon/:id', (req, res) => {
   let id = req.params.id
   userHelpers.updateCoupon(req.params.id, req.body).then(() => {
-    
     res.redirect('/admin/coupon-list')
   })
 })
 
 
-
+//categories
 router.get('/categories',adminVerify, function (req, res) {
   categoryHelpers.getAllCategories().then((categories) => {
     res.render('admin/view-categories', { categories, admin: true,layout:'admin-layout' })
@@ -169,41 +167,26 @@ router.get('/categories',adminVerify, function (req, res) {
 })
 
 
-
+//add-category
 router.get('/add-category',adminVerify, function (req, res) {
   res.render("admin/add-category", { admin: true,layout:'admin-layout'})
 })
 
 
 
-// router.post('/add-category', function (req, res) {
-//   console.log(req.body)
-//   console.log(req.files.image)
-//   categoryHelpers.addCategory(req.body, (id) => {
-//     let image = req.files.image
-//     image.mv('./public/category-images/' + id + '.jpg', (err, done) => {
-//       if (!err) {
-//         res.redirect('/admin/categories')
-//       } else {
-//         console.log(err);
-//       }
-//     })
-//   })
-// })
+
 
 
 router.post('/add-category', uploadCategory.single('image'), async (req, res) => {
   categoryHelpers.addCategory(req.body,req.file).then( (id) => {
     res.redirect('/admin/categories')
-
   }).catch((err)=>{
     res.redirect('/admin/add-category')
   })
-
 })
 
 
-
+//delete-category
 router.get('/delete-category/:id', (req, res) => {
   let catId = req.params.id
   console.log(catId)
@@ -213,7 +196,7 @@ router.get('/delete-category/:id', (req, res) => {
 })
 
 
-
+//edit-category
 router.get('/edit-category/:id',adminVerify, async (req, res) => {
   let category = await categoryHelpers.getCategoryDetails(req.params.id)
   console.log(category)
@@ -235,7 +218,7 @@ router.post('/edit-category/:id', (req, res) => {
 
 
 
-
+//user-list
 router.get('/user-list',adminVerify, function (req, res) {
   userHelpers.getAllUsers().then((users) => {
     res.render('admin/view-users', { users, admin: true,layout:'admin-layout'})
@@ -243,7 +226,7 @@ router.get('/user-list',adminVerify, function (req, res) {
 })
 
 
-
+//change-user-status
 router.patch('/change-user-status/:id',adminVerify, (req, res) => {
   let status = req.body.status
   if (status === "true") {
@@ -259,7 +242,7 @@ router.patch('/change-user-status/:id',adminVerify, (req, res) => {
 })
 
 
-
+//orders
 router.get('/orders',adminVerify, async (req, res) => {
   await userHelpers.getAllOrderDetails().then((orders) => {
     res.render('admin/view-orders', { orders,layout:'admin-layout'})
@@ -267,13 +250,15 @@ router.get('/orders',adminVerify, async (req, res) => {
 })
 
 
-
+//deliver-order
 router.patch('/deliver-order/:id', async (req, res) => {
   await userHelpers.deliverOrder(req.params.id).then((response) => {
     res.json(response)
   })
 })
 
+
+//cancel-order
 router.patch('/cancel-order/:id', async (req, res) => {
   await userHelpers.cancelOrder(req.params.id).then((response) => {
     res.json(response)
@@ -290,7 +275,7 @@ router.patch('/-order/:id', async (req, res) => {
 })
 
 
-
+//add-coupon
 router.get('/add-coupon',adminVerify, (req, res) => {
   res.render('admin/add-coupon',{layout:'admin-layout'})
 })
@@ -303,12 +288,10 @@ router.post('/add-coupon', async (req, res) => {
   })
 })
 
-// router.get('/edit-coupon/:id',adminVerify,(req,res)=>{
-//   res.render('admin/edit-coupon',{layout:'admin-layout'})
-// })
 
 
 
+//banners
 router.get('/banners',adminVerify, async (req, res) => {
   await userHelpers.getAllBanners().then((banners) => {
     res.render('admin/list-banner', { banners,layout:'admin-layout'})
@@ -316,7 +299,7 @@ router.get('/banners',adminVerify, async (req, res) => {
 })
 
 
-
+//add-banner
 router.get('/add-banner',adminVerify, async (req, res) => {
   res.render('admin/add-banner',{layout:'admin-layout'})
 })
@@ -331,6 +314,8 @@ router.post('/add-banner', uploadBanner.single('image'), async (req, res) => {
 
 })
 
+
+//change banner status
 router.patch('/change-banner-status/:id', (req, res) => {
   let status = req.body.status
   if (status === "true") {
@@ -346,22 +331,24 @@ router.patch('/change-banner-status/:id', (req, res) => {
 })
 
 
-
+//coupon list
 router.get('/coupon-list',adminVerify, async (req, res) => {
   await userHelpers.getAllCoupons().then((coupons) => {
     res.render('admin/list-coupon', { coupons,layout:'admin-layout' })
   })
-
 })
 
+
+//sales report
 router.get('/salesreport',adminVerify, async (req, res) => {
   const { start, end } = req.query
   await userHelpers.getAllOrdersByDate(start, end).then((orders) => {
     res.render('admin/sales', { orders,layout:'admin-layout' })
-  })
-
-
 })
+})
+
+
+//logout
 router.get('/logout', (req, res) => {
   req.session.admin = null
   res.redirect('/login')

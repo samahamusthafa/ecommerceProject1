@@ -3,7 +3,7 @@
                     <div class="container-fluid mt-5">
                         <div class="row">
                             {{#each products}}
-                            <div class="col-md-3 mb-4">
+                            <div class="col-md-3 mb-4" id="product-container-{{_id}}">
                                 <div class="card">
                                     <a href="/product-details/{{this._id}}"><img class="card-img-top"
                                             style="height: 400px; object-fit: cover;"
@@ -14,7 +14,7 @@
                                         <p class="card-text">Rs.{{this.price}}</p>
                                         <button onclick="addToCart('{{this._id}}')" class="btn btn-primary">Add To
                                             Cart</button>
-                                        <button onclick="deleteWishlistProduct('{{this._id}}','{{this.products}}')"
+                                        <button onclick="deleteWishlistProduct('{{this._id}}')"
                                             class="btn btn-primary">Remove</button>
 
                                     </div>
@@ -51,17 +51,13 @@
                     }
 
 
-                    function deleteWishlistProduct(wishlistId, proId) {
+                    function deleteWishlistProduct(proId) {
                         $.ajax({
-                            url: '/delete-wishlist-product',
-                            data: {
-                                wishlist: wishlistId,
-                                product: proId
-                            },
+                            url: '/delete-wishlist-product/'+proId,
                             method: 'delete',
                             success: (response) => {
-                                document.getElementById("product-container-" + proId).remove();
-                                alert("Product Removed from wishlist")
+                                document.getElementById("product-container-" + proId).remove()
+                                Swal.fire("Product Removed from wishlist")
                             }
                         })
                     }
