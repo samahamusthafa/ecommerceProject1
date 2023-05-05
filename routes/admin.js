@@ -354,6 +354,8 @@ router.get('/logout', (req, res) => {
   res.redirect('/login')
 })
 
-
+router.get('*',(req,res)=>{
+  res.send("<h1>page not found</h1>")
+})
 
 module.exports = router;

@@ -409,6 +409,10 @@ router.get('/about-us', (req, res) => {
   res.render('user/contact-us',{layout:'user-layout'})
 })
 
+
+router.get('*',(req,res)=>{
+  res.send("<h1>page not found</h1>")
+})
 module.exports = router;
 
 

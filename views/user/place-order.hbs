@@ -251,9 +251,7 @@
                     "order_id": orderId, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
                     "handler": function (response) {
                         console.log(response)
-                        alert(response.razorpay_payment_id);
-                        alert(response.razorpay_order_id);
-                        alert(response.razorpay_signature)
+                        
 
                         $.ajax({
                             "url": "/api/payment/verify",

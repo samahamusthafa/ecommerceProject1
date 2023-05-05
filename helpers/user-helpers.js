@@ -434,8 +434,8 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
                 const cartProducts = await getCartProductsforOrder(userId)
-                let total̥̥̥ = await getTotalAmount(userId)
-                console.log('total̥̥̥: ', total̥̥̥);
+                let total = await getTotalAmount(userId)
+                console.log('total: ', total);
                 const currentDate = new Date();
                 const coupon = session.coupon
                 console.log(coupon)
@@ -460,6 +460,7 @@ module.exports = {
             }
         })
     },
+    
 
 
 
@@ -655,7 +656,7 @@ module.exports = {
         })
     },
 
-    
+
 
     changeBannerStatus: (bannerId, status) => {
         return new Promise((resolve, reject) => {
